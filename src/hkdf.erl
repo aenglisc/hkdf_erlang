@@ -76,8 +76,6 @@ derive_secrets(Hash, IKM, Info, Salt, L)
 
 %%=========================================================================
 %% @doc
-%%   From [https://tools.ietf.org/html/rfc5869]
-%%
 %%   HKDF-Extract(salt, IKM) -> PRK
 %%
 %%   Options:
@@ -87,6 +85,7 @@ derive_secrets(Hash, IKM, Info, Salt, L)
 %%   Inputs:
 %%      salt     optional salt value (a non-secret random value);
 %%               if not provided, it is set to a string of HashLen zeros.
+%%
 %%      IKM      input keying material
 %%
 %%   Output:
@@ -116,8 +115,6 @@ extract(Hash, Salt, IKM)
 
 %%=========================================================================
 %% @doc
-%%   From [https://tools.ietf.org/html/rfc5869]
-%%
 %%   HKDF-Expand(PRK, info, L) -> OKM
 %%
 %%   Options:
@@ -127,10 +124,12 @@ extract(Hash, Salt, IKM)
 %%   Inputs:
 %%      PRK      a pseudorandom key of at least HashLen octets
 %%               (usually, the output from the extract step)
+%%
 %%      info     optional context and application specific information
 %%               (can be a zero-length string)
+%%
 %%      L        length of output keying material in octets
-%%               (<= 255*HashLen)
+%%               (lt or eq 255*HashLen)
 %%
 %%   Output:
 %%      OKM      output keying material (of L octets)put in octets
@@ -138,13 +137,18 @@ extract(Hash, Salt, IKM)
 %%   The output OKM is calculated as follows:
 %%
 %%   N = ceil(L/HashLen)
+%%
 %%   T = T(1) | T(2) | T(3) | ... | T(N)
+%%
 %%   OKM = first L octets of T
 %%
 %%   where:
 %%   T(0) = empty string (zero length)
+%%
 %%   T(1) = HMAC-Hash(PRK, T(0) | info | 0x01)
+%%
 %%   T(2) = HMAC-Hash(PRK, T(1) | info | 0x02)
+%%
 %%   T(3) = HMAC-Hash(PRK, T(2) | info | 0x03)
 %% @end
 %%=========================================================================
