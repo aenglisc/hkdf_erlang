@@ -14,8 +14,18 @@ Requirements
 Usage
 -----
 
+#### derive key
 ```erlang
-1> hkdf:derive_secrets(sha384, <<"Never gonna give you up">>, 42).
-<<154,213,106,190,144,171,247,34,102,254,161,207,161,219,
-  40,210,151,23,28,202,140,49,200,175,227,10,30,1,230,...>>
+OKM = hkdf:derive(sha384, <<"Never gonna give you up">>, 42).
+```
+
+#### extract key
+```erlang
+PRK = hkdf:extract(sha384, <<"Never gonna give you up">>).
+```
+
+#### expand key
+```erlang
+PRK = hkdf:extract(sha384, <<"Never gonna give you up">>).
+OKM = hkdf:expand(sha384, PRK, 42).
 ```
