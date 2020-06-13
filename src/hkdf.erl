@@ -168,7 +168,7 @@ when Hash :: hash()
    , Info :: binary()
    , L    :: pos_integer()
    , OKM  :: binary().
-expand( Hash,  PRK,  Info,  L)
+expand(Hash, PRK, Info, L)
   -> expand_(Hash, PRK, Info, L).
 
 %%=========================================================================
