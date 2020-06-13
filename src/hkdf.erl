@@ -249,9 +249,13 @@ when Hash :: hash()
    , Acc  :: binary()
    , OKM  :: binary().
 expander(Hash, PRK, Info, L, N)
-  -> fun (I = 1, {T0, Acc} = {<<>>, <<>>})
+  -> fun (I = 1, {T0, Acc} = {<<>>, <<>>}) when N =/= 1
       -> T1 = crypto:mac(hmac, Hash, PRK, <<T0/binary, Info/binary, I:8>>)
        , {T1, <<Acc/binary, T1/binary>>}
+       ; (I = 1, {T0, Acc} = {<<>>, <<>>}) when N =:= 1
+      -> T1 = crypto:mac(hmac, Hash, PRK, <<T0/binary, Info/binary, I:8>>)
+       , OKM = <<Acc/binary, T1/binary>>
+       , <<OKM:L/binary>>
        ; (I, {TPrev, Acc}) when I =/= N
       -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
        , {Ti, <<Acc/binary, Ti/binary>>}
