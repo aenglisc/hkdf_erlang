@@ -229,7 +229,7 @@ expand_(Hash, PRK, Info, L)
    .
 
 -spec validate_length(Hash, L)
-  -> ok | no_return()
+  -> ok
 when Hash :: hash()
    , L    :: pos_integer().
 validate_length(Hash, L)
