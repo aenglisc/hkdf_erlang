@@ -2,7 +2,7 @@ HKDF
 =====
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/aenglisc/hkdf_erlang/CI?style=for-the-badge)
 ![Erlang](https://img.shields.io/badge/erlang-22+-blue.svg?style=for-the-badge)
-[![Hex.pm](https://img.shields.io/hexpm/v/hkdf_erlang.svg)](https://hex.pm/packages/hkdf_erlang?style=for-the-badge)
+[![Hex.pm](https://img.shields.io/hexpm/v/hkdf_erlang.svg?style=for-the-badge)](https://hex.pm/packages/hkdf_erlang)
 
 An implementation of [HKDF](https://tools.ietf.org/html/rfc5869) in Erlang.
 
