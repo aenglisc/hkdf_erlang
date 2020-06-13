@@ -1,7 +1,7 @@
 { application
 , hkdf_erlang
 , [ { description, "An implementation of HKDF in Erlang." }
-  , { vsn, "0.1.1" }
+  , { vsn, "0.1.0" }
   , { registered, [  ] }
   , { applications, [ kernel, stdlib, crypto ] }
   , { env, [  ] }
