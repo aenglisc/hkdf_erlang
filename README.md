@@ -1,7 +1,7 @@
 HKDF
 =====
-![CI](https://github.com/aenglisc/hkdf_erlang/workflows/CI/badge.svg)
-![Erlang](https://img.shields.io/badge/erlang-22+-blue.svg)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/aenglisc/hkdf_erlang/CI?style=for-the-badge)
+![Erlang](https://img.shields.io/badge/erlang-22+-blue.svg?style=for-the-badge)
 
 An implementation of [HKDF](https://tools.ietf.org/html/rfc5869) in Erlang.
 
