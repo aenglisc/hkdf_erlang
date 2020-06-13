@@ -10,9 +10,9 @@
 -module(hkdf).
 
 -export(
-  [ derive_secrets/3
-  , derive_secrets/4
-  , derive_secrets/5
+  [ derive/3
+  , derive/4
+  , derive/5
   , extract/2
   , extract/3
   , expand/3
@@ -36,34 +36,34 @@
 
 %%=========================================================================
 %% @doc
-%%   The secret derivation function.
+%%   The derivation function.
 %%
-%%   Extracts a pseudorandom key and expands it into an output
-%%   keying material.
+%%   Extracts a pseudorandom key from an input keying material and expands
+%%   it into an output keying material.
 %%
 %%   See the respective functions for details.
 %% @end
 %%=========================================================================
--spec derive_secrets(Hash, IKM, L)
+-spec derive(Hash, IKM, L)
   -> OKM
 when Hash :: hash()
    , IKM  :: binary()
    , L    :: pos_integer()
    , OKM  :: binary().
-derive_secrets(Hash, IKM, L)
-  -> derive_secrets(Hash, IKM, <<>>, ?DEFAULT_SALT(Hash), L).
+derive(Hash, IKM, L)
+  -> derive(Hash, IKM, <<>>, ?DEFAULT_SALT(Hash), L).
 
--spec derive_secrets(Hash, IKM, Info, L)
+-spec derive(Hash, IKM, Info, L)
   -> OKM
 when Hash :: hash()
    , IKM  :: binary()
    , Info :: binary()
    , L    :: pos_integer()
    , OKM  :: binary().
-derive_secrets(Hash, IKM, Info, L)
-  -> derive_secrets(Hash, IKM, Info, ?DEFAULT_SALT(Hash), L).
+derive(Hash, IKM, Info, L)
+  -> derive(Hash, IKM, Info, ?DEFAULT_SALT(Hash), L).
 
--spec derive_secrets(Hash, IKM, Info, Salt, L)
+-spec derive(Hash, IKM, Info, Salt, L)
   -> OKM
 when Hash :: hash()
    , IKM  :: binary()
@@ -71,7 +71,7 @@ when Hash :: hash()
    , Salt :: binary()
    , L    :: pos_integer()
    , OKM  :: binary().
-derive_secrets(Hash, IKM, Info, Salt, L)
+derive(Hash, IKM, Info, Salt, L)
   -> expand(Hash, extract(Hash, Salt, IKM), Info, L).
 
 %%=========================================================================
@@ -249,18 +249,13 @@ when Hash :: hash()
    , Acc  :: binary()
    , OKM  :: binary().
 expander(Hash, PRK, Info, L, N)
-  -> fun (I = 1, {T0, Acc} = {<<>>, <<>>}) when N =/= 1
-      -> T1 = crypto:mac(hmac, Hash, PRK, <<T0/binary, Info/binary, I:8>>)
-       , {T1, <<Acc/binary, T1/binary>>}
-       ; (I = 1, {T0, Acc} = {<<>>, <<>>}) when N =:= 1
-      -> T1 = crypto:mac(hmac, Hash, PRK, <<T0/binary, Info/binary, I:8>>)
-       , OKM = <<Acc/binary, T1/binary>>
-       , <<OKM:L/binary>>
-       ; (I, {TPrev, Acc}) when I =/= N
-      -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
-       , {Ti, <<Acc/binary, Ti/binary>>}
-       ; (I, {TPrev, Acc}) when I =:= N
-      -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
-       , OKM = <<Acc/binary, Ti/binary>>
-       , <<OKM:L/binary>>
+  -> fun
+     (I, {TPrev, Acc}) when I =/= N
+       -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
+        , {Ti, <<Acc/binary, Ti/binary>>}
+        ;
+     (I, {TPrev, Acc}) when I =:= N
+       -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
+        , OKM = <<Acc/binary, Ti/binary>>
+        , <<OKM:L/binary>>
      end.

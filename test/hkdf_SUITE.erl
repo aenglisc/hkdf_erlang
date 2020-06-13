@@ -57,7 +57,7 @@ case_1(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE1_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE2_IKM_HEX,  "000102030405060708090a0b0c0d0e0f" ++
@@ -98,7 +98,7 @@ case_2(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE2_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE3_IKM_HEX,  "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b").
@@ -124,7 +124,7 @@ case_3(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE3_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE4_IKM_HEX,  "0b0b0b0b0b0b0b0b0b0b0b").
@@ -149,7 +149,7 @@ case_4(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE4_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE5_IKM_HEX,  "000102030405060708090a0b0c0d0e0f" ++
@@ -189,7 +189,7 @@ case_5(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE5_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE6_IKM_HEX,  "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b").
@@ -214,7 +214,7 @@ case_6(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE6_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, Salt, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, Salt, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, Salt, L))
    .
 
 -define(CASE7_IKM_HEX,  "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c").
@@ -236,5 +236,5 @@ case_7(_)
    , OKM  = hex2bin:hexstr_to_bin(?CASE7_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
-   , ?assertMatch(OKM, hkdf:derive_secrets(Hash, IKM, Info, L))
+   , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, L))
    .
