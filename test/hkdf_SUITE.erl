@@ -8,13 +8,13 @@
   ]).
 
 -export(
-  [ case_1/1
-  , case_2/1
-  , case_3/1
-  , case_4/1
-  , case_5/1
-  , case_6/1
-  , case_7/1
+  [ sha256_basic/1
+  , sha256_long_entries/1
+  , sha256_zero_salt_and_info/1
+  , sha_basic/1
+  , sha_longer/1
+  , sha_zero_salt_and_info/1
+  , sha_default_salt_zero_info/1
   ]).
 
 all()
@@ -23,13 +23,13 @@ all()
 
 groups()
   -> [ { official_vectors, [ parallel ]
-       , [ case_1
-         , case_2
-         , case_3
-         , case_4
-         , case_5
-         , case_6
-         , case_7
+       , [ sha256_basic
+         , sha256_long_entries
+         , sha256_zero_salt_and_info
+         , sha_basic
+         , sha_longer
+         , sha_zero_salt_and_info
+         , sha_default_salt_zero_info
          ]
        }
      ].
@@ -47,7 +47,7 @@ groups()
                         "2d2d0a90cf1a5a4c5db02d56ecc4c5bf" ++
                         "34007208d5b887185865").
 
-case_1(_)
+sha256_basic(_)
   -> Hash = sha256
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE1_IKM_HEX)
@@ -88,7 +88,7 @@ case_1(_)
                         "cc30c58179ec3e87c14c01d5c1f3434f" ++
                         "1d87").
 
-case_2(_)
+sha256_long_entries(_)
   -> Hash = sha256
    , L    = 82
    , IKM  = hex2bin:hexstr_to_bin(?CASE2_IKM_HEX)
@@ -114,7 +114,7 @@ case_2(_)
                         "b8a11f5c5ee1879ec3454e5f3c738d2d" ++
                         "9d201395faa4b61a96c8").
 
-case_3(_)
+sha256_zero_salt_and_info(_)
   -> Hash = sha256
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE3_IKM_HEX)
@@ -139,7 +139,7 @@ case_3(_)
                         "a4f14b822f5b091568a9cdd4f155fda2" ++
                         "c22e422478d305f3f896").
 
-case_4(_)
+sha_basic(_)
   -> Hash = sha
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE4_IKM_HEX)
@@ -179,7 +179,7 @@ case_4(_)
                         "927336d0441f4c4300e2cff0d0900b52" ++
                         "d3b4").
 
-case_5(_)
+sha_longer(_)
   -> Hash = sha
    , L    = 82
    , IKM  = hex2bin:hexstr_to_bin(?CASE5_IKM_HEX)
@@ -204,7 +204,7 @@ case_5(_)
                         "b9ae52057220a306e07b6b87e8df21d0" ++
                         "ea00033de03984d34918").
 
-case_6(_)
+sha_zero_salt_and_info(_)
   -> Hash = sha
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE6_IKM_HEX)
@@ -227,7 +227,7 @@ case_6(_)
                         "b3bae548aa53d423b0d1f27ebba6f5e5" ++
                         "673a081d70cce7acfc48").
 
-case_7(_)
+sha_default_salt_zero_info(_)
   -> Hash = sha
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE7_IKM_HEX)
