@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module hkdf</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module hkdf</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+  HKDF implementation in Erlang.
+<p>Copyright © (C) 2020, Roman Pushkov
+ </p>
+
+<p><b>Authors:</b> Roman Pushkov (<a href="mailto:pushkovroman@me.com"><tt>pushkovroman@me.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>
+  HKDF implementation in Erlang.
+  See more at <a href="https://tools.ietf.org/html/rfc5869" target="_top"><tt>https://tools.ietf.org/html/rfc5869</tt></a>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-hash">hash()</a></h3>
+<p><tt>hash() = md5 | sha | sha224 | sha256 | sha384 | sha512</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#derive-3">derive/3</a></td><td>  
+The derivation function.</td></tr>
+<tr><td valign="top"><a href="#derive-4">derive/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#derive-5">derive/5</a></td><td></td></tr>
+<tr><td valign="top"><a href="#expand-3">expand/3</a></td><td>  
+The expansion function.</td></tr>
+<tr><td valign="top"><a href="#expand-4">expand/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#extract-2">extract/2</a></td><td>  
+The extraction function.</td></tr>
+<tr><td valign="top"><a href="#extract-3">extract/3</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="derive-3">derive/3</a></h3>
+<div class="spec">
+<p><tt>derive(Hash, IKM, L) -&gt; OKM</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>IKM = binary()</tt></li><li><tt>L = pos_integer()</tt></li><li><tt>OKM = binary()</tt></li></ul></p>
+</div><p><p>  
+The derivation function.</p>
+ 
+  <p>Extracts a pseudorandom key from an input keying material and expands  
+it into an output keying material.</p>
+ 
+  See the respective functions for details.</p>
+
+<h3 class="function"><a name="derive-4">derive/4</a></h3>
+<div class="spec">
+<p><tt>derive(Hash, IKM, Info, L) -&gt; OKM</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>IKM = binary()</tt></li><li><tt>Info = binary()</tt></li><li><tt>L = pos_integer()</tt></li><li><tt>OKM = binary()</tt></li></ul></p>
+</div>
+
+<h3 class="function"><a name="derive-5">derive/5</a></h3>
+<div class="spec">
+<p><tt>derive(Hash, IKM, Info, Salt, L) -&gt; OKM</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>IKM = binary()</tt></li><li><tt>Info = binary()</tt></li><li><tt>Salt = binary()</tt></li><li><tt>L = pos_integer()</tt></li><li><tt>OKM = binary()</tt></li></ul></p>
+</div>
+
+<h3 class="function"><a name="expand-3">expand/3</a></h3>
+<div class="spec">
+<p><tt>expand(Hash, PRK, L) -&gt; OKM</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>PRK = binary()</tt></li><li><tt>L = pos_integer()</tt></li><li><tt>OKM = binary()</tt></li></ul></p>
+</div><p><p>  
+The expansion function.</p>
+ 
+  <pre>  HKDF-Expand(PRK, info, L) -&gt; OKM
+ 
+  Options:
+     Hash     a hash function; HashLen denotes the length of the
+              hash function output in octets
+  Inputs:
+     PRK      a pseudorandom key of at least HashLen octets
+              (usually, the output from the extract step)
+     info     optional context and application specific information
+              (can be a zero-length string)
+     L        length of output keying material in octets
+              (&lt;= 255*HashLen)
+ 
+  Output:
+     OKM      output keying material (of L octets)
+ 
+  The output OKM is calculated as follows:
+ 
+  N = ceil(L/HashLen)
+  T = T(1) | T(2) | T(3) | ... | T(N)
+  OKM = first L octets of T
+ 
+  where:
+  T(0) = empty string (zero length)
+  T(1) = HMAC-Hash(PRK, T(0) | info | 0x01)
+  T(2) = HMAC-Hash(PRK, T(1) | info | 0x02)
+  T(3) = HMAC-Hash(PRK, T(2) | info | 0x03)
+  ...
+ 
+  (where the constant concatenated to the end of each T(n) is a
+  single octet.)</pre></p>
+
+<h3 class="function"><a name="expand-4">expand/4</a></h3>
+<div class="spec">
+<p><tt>expand(Hash, PRK, Info, L) -&gt; OKM</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>PRK = binary()</tt></li><li><tt>Info = binary()</tt></li><li><tt>L = pos_integer()</tt></li><li><tt>OKM = binary()</tt></li></ul></p>
+</div>
+
+<h3 class="function"><a name="extract-2">extract/2</a></h3>
+<div class="spec">
+<p><tt>extract(Hash, IKM) -&gt; PRK</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>IKM = binary()</tt></li><li><tt>PRK = binary()</tt></li></ul></p>
+</div><p><p>  
+The extraction function.</p>
+ 
+  <pre>  HKDF-Extract(salt, IKM) -&gt; PRK
+  Options:
+     Hash     a hash function; HashLen denotes the length of the
+              hash function output in octets
+ 
+  Inputs:
+     salt     optional salt value (a non-secret random value);
+              if not provided, it is set to a string of HashLen zeros.
+     IKM      input keying material
+ 
+  Output:
+     PRK      a pseudorandom key (of HashLen octets)
+ 
+  The output PRK is calculated as follows:
+ 
+  PRK = HMAC-Hash(salt, IKM)</pre></p>
+
+<h3 class="function"><a name="extract-3">extract/3</a></h3>
+<div class="spec">
+<p><tt>extract(Hash, Salt, IKM) -&gt; PRK</tt>
+<ul class="definitions"><li><tt>Hash = <a href="#type-hash">hash()</a></tt></li><li><tt>Salt = binary()</tt></li><li><tt>IKM = binary()</tt></li><li><tt>PRK = binary()</tt></li></ul></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>
