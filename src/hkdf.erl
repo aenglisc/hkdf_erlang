@@ -3,8 +3,8 @@
 %% @copyright (C) 2020, Roman Pushkov
 %%
 %% @doc
-%%   HKDF implementation in Erlang.
-%%   See more at [https://tools.ietf.org/html/rfc5869]
+%% HKDF implementation in Erlang.
+%% See more at [https://tools.ietf.org/html/rfc5869]
 %% @end
 %%=========================================================================
 -module(hkdf).
@@ -36,12 +36,12 @@
 
 %%=========================================================================
 %% @doc
-%%   The derivation function.
+%% The derivation function.
 %%
-%%   Extracts a pseudorandom key from an input keying material and expands
-%%   it into an output keying material.
+%% Extracts a pseudorandom key from an input keying material and expands
+%% it into an output keying material.
 %%
-%%   See the respective functions for details.
+%% See the respective functions for details.
 %% @end
 %%=========================================================================
 -spec derive(Hash, IKM, L)
@@ -76,24 +76,26 @@ derive(Hash, IKM, Info, Salt, L)
 
 %%=========================================================================
 %% @doc
-%%   HKDF-Extract(salt, IKM) -> PRK
+%% The extraction function.
 %%
-%%   Options:
-%%      Hash     a hash function; HashLen denotes the length of the
-%%               hash function output in octets
+%% ```
+%% HKDF-Extract(salt, IKM) -> PRK
+%% Options:
+%%    Hash     a hash function; HashLen denotes the length of the
+%%             hash function output in octets
 %%
-%%   Inputs:
-%%      salt     optional salt value (a non-secret random value);
-%%               if not provided, it is set to a string of HashLen zeros.
+%% Inputs:
+%%    salt     optional salt value (a non-secret random value);
+%%             if not provided, it is set to a string of HashLen zeros.
+%%    IKM      input keying material
 %%
-%%      IKM      input keying material
+%% Output:
+%%    PRK      a pseudorandom key (of HashLen octets)
 %%
-%%   Output:
-%%      PRK      a pseudorandom key (of HashLen octets)
+%% The output PRK is calculated as follows:
 %%
-%%   The output PRK is calculated as follows:
-%%
-%%   PRK = HMAC-Hash(salt, IKM)
+%% PRK = HMAC-Hash(salt, IKM)
+%% '''
 %% @end
 %%=========================================================================
 -spec extract(Hash, IKM)
@@ -115,41 +117,41 @@ extract(Hash, Salt, IKM)
 
 %%=========================================================================
 %% @doc
-%%   HKDF-Expand(PRK, info, L) -> OKM
+%% The expansion function.
 %%
-%%   Options:
-%%      Hash     a hash function; HashLen denotes the length of the
-%%               hash function output in octets
+%% ```
+%% HKDF-Expand(PRK, info, L) -> OKM
 %%
-%%   Inputs:
-%%      PRK      a pseudorandom key of at least HashLen octets
-%%               (usually, the output from the extract step)
+%% Options:
+%%    Hash     a hash function; HashLen denotes the length of the
+%%             hash function output in octets
+%% Inputs:
+%%    PRK      a pseudorandom key of at least HashLen octets
+%%             (usually, the output from the extract step)
+%%    info     optional context and application specific information
+%%             (can be a zero-length string)
+%%    L        length of output keying material in octets
+%%             (<= 255*HashLen)
 %%
-%%      info     optional context and application specific information
-%%               (can be a zero-length string)
+%% Output:
+%%    OKM      output keying material (of L octets)
 %%
-%%      L        length of output keying material in octets
-%%               (lt or eq 255*HashLen)
+%% The output OKM is calculated as follows:
 %%
-%%   Output:
-%%      OKM      output keying material (of L octets)put in octets
+%% N = ceil(L/HashLen)
+%% T = T(1) | T(2) | T(3) | ... | T(N)
+%% OKM = first L octets of T
 %%
-%%   The output OKM is calculated as follows:
+%% where:
+%% T(0) = empty string (zero length)
+%% T(1) = HMAC-Hash(PRK, T(0) | info | 0x01)
+%% T(2) = HMAC-Hash(PRK, T(1) | info | 0x02)
+%% T(3) = HMAC-Hash(PRK, T(2) | info | 0x03)
+%% ...
 %%
-%%   N = ceil(L/HashLen)
-%%
-%%   T = T(1) | T(2) | T(3) | ... | T(N)
-%%
-%%   OKM = first L octets of T
-%%
-%%   where:
-%%   T(0) = empty string (zero length)
-%%
-%%   T(1) = HMAC-Hash(PRK, T(0) | info | 0x01)
-%%
-%%   T(2) = HMAC-Hash(PRK, T(1) | info | 0x02)
-%%
-%%   T(3) = HMAC-Hash(PRK, T(2) | info | 0x03)
+%% (where the constant concatenated to the end of each T(n) is a
+%% single octet.)
+%% '''
 %% @end
 %%=========================================================================
 -spec expand(Hash, PRK, L)
