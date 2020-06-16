@@ -12,7 +12,7 @@
   , sha256_long_entries/1
   , sha256_zero_salt_and_info/1
   , sha_basic/1
-  , sha_longer/1
+  , sha_long_entries/1
   , sha_zero_salt_and_info/1
   , sha_default_salt_zero_info/1
   ]).
@@ -27,7 +27,7 @@ groups()
          , sha256_long_entries
          , sha256_zero_salt_and_info
          , sha_basic
-         , sha_longer
+         , sha_long_entries
          , sha_zero_salt_and_info
          , sha_default_salt_zero_info
          ]
@@ -179,7 +179,7 @@ sha_basic(_)
                         "927336d0441f4c4300e2cff0d0900b52" ++
                         "d3b4").
 
-sha_longer(_)
+sha_long_entries(_)
   -> Hash = sha
    , L    = 82
    , IKM  = hex2bin:hexstr_to_bin(?CASE5_IKM_HEX)
@@ -231,7 +231,7 @@ sha_default_salt_zero_info(_)
   -> Hash = sha
    , L    = 42
    , IKM  = hex2bin:hexstr_to_bin(?CASE7_IKM_HEX)
-   , Info = hex2bin:hexstr_to_bin(?CASE6_INFO_HEX)
+   , Info = hex2bin:hexstr_to_bin(?CASE7_INFO_HEX)
    , PRK  = hex2bin:hexstr_to_bin(?CASE7_PRK_HEX)
    , OKM  = hex2bin:hexstr_to_bin(?CASE7_OKM_HEX)
    , ?assertMatch(PRK, hkdf:extract(Hash, IKM))
