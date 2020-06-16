@@ -179,7 +179,7 @@ expand(Hash, PRK, Info, L)
 
 -spec hash_length(Hash)
   -> HashLength
-when Hash :: hash()
+when Hash       :: hash()
    , HashLength :: pos_integer().
 hash_length(md5)
   -> 128 bsr 3;
