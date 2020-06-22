@@ -43,7 +43,7 @@ groups()
          , sha_default_salt_zero_info
          ]
        }
-     , { badarg, [parallel]
+     , { badarg, [ parallel ]
        , [ invalid_hash
          , unknown_hash
          , invalid_length
