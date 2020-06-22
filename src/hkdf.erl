@@ -28,8 +28,6 @@
    | sha512
    .
 
--define(DEFAULT_SALT(Hash), <<0:(hash_length(Hash))>>).
-
 %%=========================================================================
 %% API functions
 %%=========================================================================
@@ -51,7 +49,7 @@ when Hash :: hash()
    , L    :: pos_integer()
    , OKM  :: binary().
 derive(Hash, IKM, L)
-  -> derive(Hash, IKM, <<>>, ?DEFAULT_SALT(Hash), L).
+  -> derive(Hash, IKM, <<>>, default_salt(Hash), L).
 
 -spec derive(Hash, IKM, Info, L)
   -> OKM
@@ -61,7 +59,7 @@ when Hash :: hash()
    , L    :: pos_integer()
    , OKM  :: binary().
 derive(Hash, IKM, Info, L)
-  -> derive(Hash, IKM, Info, ?DEFAULT_SALT(Hash), L).
+  -> derive(Hash, IKM, Info, default_salt(Hash), L).
 
 -spec derive(Hash, IKM, Info, Salt, L)
   -> OKM
@@ -104,7 +102,7 @@ when Hash :: hash()
    , IKM  :: binary()
    , PRK  :: binary().
 extract(Hash, IKM)
-  -> extract(Hash, ?DEFAULT_SALT(Hash), IKM).
+  -> extract(Hash, default_salt(Hash), IKM).
 
 -spec extract(Hash, Salt, IKM)
   -> PRK
@@ -177,6 +175,8 @@ expand(Hash, PRK, Info, L)
 %% Internal functions
 %%=========================================================================
 
+-define(HASHES, [md5, sha, sha224, sha256, sha384, sha512]).
+
 -spec hash_length(Hash)
   -> HashLength
 when Hash       :: hash()
@@ -194,6 +194,25 @@ hash_length(sha384)
 hash_length(sha512)
   -> 512 bsr 3.
 
+-spec valid_hash(Hash)
+  -> true when Hash :: hash().
+valid_hash(Hash)
+  -> lists:member(Hash, ?HASHES) orelse error(badarg).
+
+-spec valid_length(Hash, L)
+  -> true
+when Hash :: hash()
+   , L    :: pos_integer().
+valid_length(Hash, L)
+  -> hash_length(Hash) * 255 >= L orelse error(badarg).
+
+-spec default_salt(Hash)
+  -> DefaultSalt
+when Hash        :: hash()
+   , DefaultSalt :: binary().
+default_salt(Hash)
+  -> valid_hash(Hash) andalso <<0:(hash_length(Hash))>>.
+
 -spec extract_(Hash, Salt, IKM)
   -> PRK
 when Hash :: hash()
@@ -202,11 +221,11 @@ when Hash :: hash()
    , PRK  :: binary().
 extract_(Hash, Salt, IKM)
 when not is_atom(Hash)
-   , not is_binary(Salt)
-   , not is_binary(IKM)
+   ; not is_binary(Salt)
+   ; not is_binary(IKM)
   -> error(badarg);
 extract_(Hash, Salt, IKM)
-  -> crypto:mac(hmac, Hash, Salt, IKM).
+  -> valid_hash(Hash) andalso crypto:mac(hmac, Hash, Salt, IKM).
 
 -spec expand_(Hash, PRK, Info, L)
   -> OKM
@@ -217,26 +236,18 @@ when Hash :: hash()
    , OKM  :: binary().
 expand_(Hash, PRK, Info, L)
 when not is_atom(Hash)
-   , not is_binary(PRK)
-   , not is_binary(Info)
-   , not is_integer(L), L =< 0
+   ; not is_binary(PRK)
+   ; not is_binary(Info)
+   ; not is_integer(L)
+   ; L =< 0
   -> error(badarg);
 expand_(Hash, PRK, Info, L)
-  -> ok = validate_length(Hash, L)
+  -> valid_hash(Hash) andalso valid_length(Hash, L)
    , N = round(math:ceil(L/hash_length(Hash)))
    , Expander = expander(Hash, PRK, Info, L, N)
    , T0 = <<>>
    , Acc = <<>>
    , lists:foldl(Expander, {T0, Acc}, lists:seq(1, N))
-   .
-
--spec validate_length(Hash, L)
-  -> ok
-when Hash :: hash()
-   , L    :: pos_integer().
-validate_length(Hash, L)
-  -> hash_length(Hash) * 255 >= L orelse error(badlength)
-   , ok
    .
 
 -spec expander(Hash, PRK, Info, L, N)
