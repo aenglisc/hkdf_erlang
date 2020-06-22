@@ -17,8 +17,19 @@
   , sha_default_salt_zero_info/1
   ]).
 
+-export(
+  [ invalid_hash/1
+  , unknown_hash/1
+  , invalid_length/1
+  , excessive_length/1
+  , negative_length/1
+  , invalid_ikm/1
+  , invalid_prk/1
+  ]).
+
 all()
   -> [ { group, official_vectors }
+     , { group, badarg }
      ].
 
 groups()
@@ -30,6 +41,16 @@ groups()
          , sha_long_entries
          , sha_zero_salt_and_info
          , sha_default_salt_zero_info
+         ]
+       }
+     , { badarg, [parallel]
+       , [ invalid_hash
+         , unknown_hash
+         , invalid_length
+         , excessive_length
+         , negative_length
+         , invalid_ikm
+         , invalid_prk
          ]
        }
      ].
@@ -237,4 +258,73 @@ sha_default_salt_zero_info(_)
    , ?assertMatch(PRK, hkdf:extract(Hash, IKM))
    , ?assertMatch(OKM, hkdf:expand(Hash, PRK, Info, L))
    , ?assertMatch(OKM, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+invalid_hash(_)
+  -> Hash = "not_an_atom"
+   , L    = 42
+   , IKM  = <<"never gonna give you up">>
+   , PRK  = <<"never gonna give you up">>
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:extract(Hash, IKM))
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+unknown_hash(_)
+  -> Hash = sha42
+   , L    = 42
+   , IKM  = <<"never gonna give you up">>
+   , PRK  = <<"never gonna give you up">>
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:extract(Hash, IKM))
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+invalid_length(_)
+  -> Hash = sha
+   , L    = "not_an_integer"
+   , IKM  = <<"never gonna give you up">>
+   , PRK  = <<"never gonna give you up">>
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+negative_length(_)
+  -> Hash = sha
+   , L    = -1
+   , IKM  = <<"never gonna give you up">>
+   , PRK  = <<"never gonna give you up">>
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+excessive_length(_)
+  -> Hash = sha
+   , L    = 100000000000000000000000
+   , IKM  = <<"never gonna give you up">>
+   , PRK  = <<"never gonna give you up">>
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+invalid_ikm(_)
+  -> Hash = sha
+   , L    = 42
+   , IKM  = "not_a_binary"
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:extract(Hash, IKM))
+   , ?assertError(badarg, hkdf:derive(Hash, IKM, Info, L))
+   .
+
+invalid_prk(_)
+  -> Hash = sha
+   , L    = 42
+   , PRK  = "not_a_binary"
+   , Info = <<"never gonna give you up">>
+   , ?assertError(badarg, hkdf:expand(Hash, PRK, Info, L))
    .
