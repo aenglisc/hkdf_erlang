@@ -264,11 +264,13 @@ when Hash :: hash()
 expander(Hash, PRK, Info, L, N)
   -> fun
      (I, {TPrev, Acc}) when I =/= N
-       -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
+       -> Data = <<TPrev/binary, Info/binary, I:8>>
+        , Ti   = crypto:mac(hmac, Hash, PRK, Data)
         , {Ti, <<Acc/binary, Ti/binary>>}
         ;
      (I, {TPrev, Acc}) when I =:= N
-       -> Ti = crypto:mac(hmac, Hash, PRK, <<TPrev/binary, Info/binary, I:8>>)
-        , OKM = <<Acc/binary, Ti/binary>>
+       -> Data = <<TPrev/binary, Info/binary, I:8>>
+        , Ti   = crypto:mac(hmac, Hash, PRK, Data)
+        , OKM  = <<Acc/binary, Ti/binary>>
         , <<OKM:L/binary>>
      end.
