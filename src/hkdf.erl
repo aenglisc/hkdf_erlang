@@ -225,7 +225,7 @@ when not is_atom(Hash)
    ; not is_binary(IKM)
   -> error(badarg);
 extract_(Hash, Salt, IKM)
-  -> valid_hash(Hash) andalso crypto:mac(hmac, Hash, Salt, IKM).
+  -> valid_hash(Hash) andalso hmac(Hash, Salt, IKM).
 
 -spec expand_(Hash, PRK, Info, L)
   -> OKM
@@ -265,12 +265,31 @@ expander(Hash, PRK, Info, L, N)
   -> fun
      (I, {TPrev, Acc}) when I =/= N
        -> Data = <<TPrev/binary, Info/binary, I:8>>
-        , Ti   = crypto:mac(hmac, Hash, PRK, Data)
+        , Ti   = hmac(Hash, PRK, Data)
         , {Ti, <<Acc/binary, Ti/binary>>}
         ;
      (I, {TPrev, Acc}) when I =:= N
        -> Data = <<TPrev/binary, Info/binary, I:8>>
-        , Ti   = crypto:mac(hmac, Hash, PRK, Data)
+        , Ti   = hmac(Hash, PRK, Data)
         , OKM  = <<Acc/binary, Ti/binary>>
         , <<OKM:L/binary>>
      end.
+
+-spec hmac(Hash, PRK, Info)
+  -> Mac
+when Hash :: hash()
+   , PRK  :: binary()
+   , Info :: binary()
+   , Mac  :: binary().
+-ifdef(OTP_RELEASE).
+  -if(?OTP_RELEASE >= 23).
+    hmac(Hash, PRK, Data) ->
+      crypto:mac(hmac, Hash, PRK, Data).
+  -else.
+    hmac(Hash, PRK, Data) ->
+      crypto:hmac(Hash, PRK, Data).
+  -endif.
+-else.
+  hmac(Hash, PRK, Data) ->
+    crypto:hmac(Hash, PRK, Data).
+-endif.
