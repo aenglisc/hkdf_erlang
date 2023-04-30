@@ -72,3 +72,18 @@ jobs:
       run: rebar3 dialyzer
     - name: Run tests
       run: rebar3 ct
+
+  erlang_25:
+    runs-on: ubuntu-latest
+
+    container:
+      image: erlang:25
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Compile
+      run: rebar3 compile
+    - name: Check types
+      run: rebar3 dialyzer
+    - name: Run tests
+      run: rebar3 ct
