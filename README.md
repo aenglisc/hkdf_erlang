@@ -1,6 +1,6 @@
 HKDF
 =====
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/aenglisc/hkdf_erlang/CI?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/aenglisc/hkdf_erlang/ci.yml?style=for-the-badge)
 ![Erlang](https://img.shields.io/badge/erlang-ANY-blue.svg?style=for-the-badge)
 [![Hex.pm](https://img.shields.io/hexpm/v/hkdf_erlang.svg?style=for-the-badge)](https://hex.pm/packages/hkdf_erlang)
 
